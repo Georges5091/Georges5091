@@ -1,157 +1,155 @@
-package tictactoe;
+package chucknorris;
 
 import java.util.Scanner;
 
 public class Main {
-
     private final static Scanner input = new Scanner(System.in);
 
     public static void main(String[] args) {
-        print();
-    }
-
-    public static void print() {
-        System.out.println("----------");
-        for (int i = 0; i < 9; i +=3) {
-            System.out.println("|       |");
-        }
-        System.out.println("----------");
-        printNew();
-    }
-
-    public static String analyze(String msg) {
-        int count = 0;
-        int xCount = 0;
-        int oCount = 0;
-        int xWin = 0;
-        int oWin = 0;
-        String resultStr;
-        for (int i = 0; i < msg.length(); i++) {
-            if (msg.charAt(i) == ' ') {
-                count++;
-            } else if (msg.charAt(i) == 'X') {
-                xCount++;
-            } else {
-                oCount++;
-            }
-        }
-
-        int result = xCount - oCount;
-        if (result != 1 && result != 0 && result != -1) {
-            System.out.println("Impossible");
-            return "Impossible";
-        }
-
-        for (int i = 0; i < msg.length() - 2; i+=3) {
-            if (msg.startsWith("XXX", i)) {
-                xWin++;
-            } else if (msg.charAt(i) == 'O' && msg.charAt(i + 1) == 'O' && msg.charAt(i + 2) == 'O') {
-                oWin++;
-            }
-        }
-
-        for (int i = 0; i < 3; i++) {
-            if (msg.charAt(i) == 'X' && msg.charAt(i + 3) == 'X' && msg.charAt(i + 6) == 'X') {
-                xWin++;
-            } else if (msg.charAt(i) == 'O' && msg.charAt(i + 3) == 'O' && msg.charAt(i + 6) == 'O') {
-                oWin++;
-            }
-        }
-
-        if ((msg.charAt(0) == 'X' && msg.charAt(4) == 'X' && msg.charAt(8) == 'X') || (msg.charAt(2) == 'X' && msg.charAt(4) == 'X' && msg.charAt(6) == 'X')) {
-            xWin++;
-        } else if ((msg.charAt(0) == 'O' && msg.charAt(4) == 'O' && msg.charAt(8) == 'O') || (msg.charAt(2) == 'O' && msg.charAt(4) == 'O' && msg.charAt(6) == 'O')) {
-            oWin++;
-        }
-
-        if (xWin > 0 && oWin > 0) {
-            System.out.println("Impossible");
-            resultStr = "Impossible";
-        } else if (oWin > 0) {
-            System.out.println("O wins");
-            resultStr = "O wins";
-        } else if (xWin > 0) {
-            System.out.println("X wins");
-            resultStr = "X wins";
-        } else if (count == 0) {
-            System.out.println("Draw");
-            resultStr = "Draw";
-        } else {
-            System.out.println("Game not finished");
-            resultStr = "Game not finished";
-        }
-        return resultStr;
-    }
-
-    public static void printNew() {
-        int check;
-        String checkAnalyse = "Game not finished";
-        String newMsg = "         ";
-        char[] arr = newMsg.toCharArray();
-        int count = 0;
-        char c;
+        String answer;
 
         do {
-            check = 1;
+            System.out.println("Please input operation (encode/decode/exit):");
+            answer = input.nextLine();
 
-            String answer = input.nextLine();
+            switch (answer) {
+                case "encode" -> convertString();
+                case "decode" -> toBinary();
+                case "exit" -> System.out.println("Bye!");
+                default -> System.out.println("There is no '" + answer + "' operation\n");
+            }
+        } while (!answer.equals("exit"));
+    }
 
-            int firstDigit;
-            int secondDigit;
+    private static void convertString() {
+        String answer;
+        char[] charArray;
+        StringBuilder finalBit = new StringBuilder();
 
-            if (answer.charAt(0) < '0' || answer.charAt(0) > '9' || answer.charAt(1) != ' ' || answer.charAt(2) < '0' || answer.charAt(2) > '9') {
-                System.out.println("You should enter numbers!");
-                check = 0;
-            } else {
-                firstDigit = Integer.parseInt(String.valueOf(answer.charAt(0)));
-                secondDigit = Integer.parseInt(String.valueOf(answer.charAt(2)));
-                if ((firstDigit < 1 || firstDigit > 3) || (secondDigit < 1 || secondDigit > 3)) {
-                    System.out.println("Coordinates should be from 1 to 3!");
-                    check = 0;
-                } else {
-                    if (count % 2 == 0) {
-                        c = 'X';
-                    } else {
-                        c = 'O';
-                    }
-                    if (firstDigit == 1) {
-                        if (newMsg.charAt(secondDigit - 1) != ' ') {
-                            System.out.println("This cell is occupied! Choose another one!");
-                            check = 0;
-                        } else {
-                            arr[secondDigit - 1] = c;
-                            newMsg = new String(arr);
-                            count++;
-                        }
-                    } else if (firstDigit == 2) {
-                        if (newMsg.charAt(secondDigit + firstDigit) != ' ') {
-                            System.out.println("This cell is occupied! Choose another one!");
-                            check = 0;
-                        } else {
-                            arr[secondDigit + firstDigit] = c;
-                            newMsg = new String(arr);
-                            count++;
-                        }
-                    } else {
-                        if (newMsg.charAt(secondDigit + firstDigit + 2) != ' ') {
-                            System.out.println("This cell is occupied! Choose another one!");
-                            check = 0;
-                        } else {
-                            arr[secondDigit + firstDigit + 2] = c;
-                            newMsg = new String(arr);
-                            count++;
-                        }
-                    }
-                    System.out.println("----------");
-                    for (int i = 0; i < 9; i +=3) {
-                        System.out.println("| " + newMsg.charAt(i) + " " + newMsg.charAt(i + 1) + " " + newMsg.charAt(i + 2) + " |");
-                    }
-                    System.out.println("----------");
-                    checkAnalyse = analyze(newMsg);
+        System.out.println("Input string:");
+        answer = input.nextLine();
+
+        charArray = new char[answer.length()];
+
+        System.out.println("Encoded string:");
+
+        for (int i = 0;  i < charArray.length; i++) {
+            charArray[i] = answer.charAt(i);
+            String bit = Integer.toBinaryString(charArray[i]);
+            if (bit.length() < 7) {
+                bit = "0" + bit;
+            }
+            finalBit.append(bit);
+        }
+
+        String result = convertBinary(finalBit.toString());
+        System.out.println(result);
+        System.out.println();
+
+    }
+
+    private static String convertBinary(String finalBit) {
+        StringBuilder result = new StringBuilder();
+        String[] temp;
+        temp = finalBit.split("");
+        for (int i = 0; i < temp.length - 1 ; i++) {
+            if (temp[i].startsWith(temp[i + 1]) && !temp[i + 1].equals("")) {
+                temp[i] += temp[i + 1];
+                temp[i + 1] = "";
+                deleteAtPosition(i + 1, temp);
+                i--;
+
+            }
+        }
+
+        for (String string : temp) {
+            if (string.startsWith("1")) {
+                result.append("0 ");
+                result.append("0".repeat(string.length()));
+                result.append(" ");
+            } else if (string.startsWith("0")) {
+                result.append("00 ");
+                result.append("0".repeat(string.length()));
+                result.append(" ");
+            }
+        }
+
+        return String.valueOf(result);
+    }
+
+    private static void deleteAtPosition(int position, String[] arr) {
+        for (int i = position; i < arr.length - 1; i++) {
+            String temp = arr[i + 1];
+            arr[i + 1] = arr[i];
+            arr[i] = temp;
+        }
+    }
+
+    private static void toBinary() {
+        String[] temp;
+        StringBuilder result = new StringBuilder();
+
+        System.out.println("Input encoded string:");
+        String answer = input.nextLine();
+
+        temp = answer.split(" ");
+
+        for (int i = 0; i < temp.length; i++) {
+            if (temp.length % 2 != 0) {
+                System.out.println("Encoded string is not valid.\n");
+                return;
+            }
+            if (!temp[i].startsWith("0")) {
+                System.out.println("Encoded string is not valid.\n");
+                return;
+            }
+            if (i % 2 == 0) {
+                if (!temp[i].equals("0") && !temp[i].equals("00")) {
+                    System.out.println("Encoded string is not valid.\n");
+                    return;
                 }
             }
+        }
 
-        } while ((check != 1 || count < 9) && checkAnalyse.equals("Game not finished"));
+        for (int i = 0; i < temp.length; i+=2) {
+            if (temp[i].equals("0")) {
+                result.append("1".repeat(temp[i + 1].length()));
+            } else {
+                result.append("0".repeat(temp[i + 1].length()));
+            }
+        }
 
+        if (result.length() % 7 != 0) {
+            System.out.println("Encoded string is not valid.\n");
+            return;
+        }
+
+        convertToString(String.valueOf(result));
+    }
+
+    private static void convertToString(String binary) {
+        String[] block = new String[binary.length() / 7];
+        char[] result = new char[block.length];
+
+        for (int i = 0, j = 0; i < binary.length() && j < block.length; i+=7, j++) {
+            int k = i + 7;
+            block[j] = binary.substring(i, k);
+        }
+
+        for (int i = 0; i < block.length; i++) {
+            for (int j = 6; j >= 0; j--) {
+                int k = (j - 6) * -1;
+                if (block[i].charAt(k) == '1') {
+                    result[i] += Math.pow(2, j);
+                }
+            }
+        }
+
+        System.out.println("Decoded string:");
+        for (char c : result) {
+            System.out.print(c + "");
+        }
+        System.out.println();
+        System.out.println();
     }
 }
